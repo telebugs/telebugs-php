@@ -1,14 +1,39 @@
 {
-    "name": "telebugs/telebugs",
-    "description": "Telebugs for PHP is an error reporting library for Telebugs (https://telebugs.com/), a simple error monitoring tool for developers. With Telebugs, you can track production errors in real-time and report them to Telegram.",
-    "type": "library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Kyrylo Silin",
-            "email": "help@telebugs.com"
-        }
-    ],
-    "minimum-stability": "stable",
-    "require": {}
+  "name": "telebugs/telebugs",
+  "description": "Telebugs for PHP is an error reporting library for Telebugs (https://telebugs.com/), a simple error monitoring tool for developers. With Telebugs, you can track production errors in real-time and report them to Telegram.",
+  "keywords": [
+    "telebugs",
+    "error-monitoring",
+    "error-reporting",
+    "error-tracking",
+    "crash-reporting",
+    "errors",
+    "exceptions",
+    "crashes"
+  ],
+  "type": "library",
+  "license": "MIT",
+  "homepage": "https://telebugs.com/",
+  "authors": [
+    {
+      "name": "Kyrylo Silin",
+      "email": "help@telebugs.com",
+      "homepage": "https://telebugs.com/"
+    }
+  ],
+  "require": {
+    "php": ">=8.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Telebugs\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Telebugs\\Tests\\": "tests/"
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
 }
