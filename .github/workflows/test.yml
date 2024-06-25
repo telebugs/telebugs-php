@@ -12,6 +12,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     name: PHP ${{ matrix.ruby }}
     strategy:
+      fail-fast: false
       matrix:
         os:
           - ubuntu-latest
