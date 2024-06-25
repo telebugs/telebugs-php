@@ -10,7 +10,7 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-    name: PHP ${{ matrix.php }}
+    name: PHP ${{ matrix.php }} (${{ matrix.os }})
     strategy:
       fail-fast: false
       matrix:
