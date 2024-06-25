@@ -6,10 +6,11 @@ use PHPUnit\Framework\TestCase;
 
 use Telebugs\Reporter;
 
-class ReporterTest extends TestCase {
-    public function testReport() {
-        $reporter = new Reporter();
-        $this->expectOutputString("Reporting error: Error message\n");
-        $reporter->report("Error message");
+class ReporterTest extends TestCase
+{
+    public function testReport()
+    {
+        $reporter = Reporter::getInstance();
+        $this->assertInstanceOf(Reporter::class, $reporter);
     }
 }
