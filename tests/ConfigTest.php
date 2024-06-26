@@ -51,6 +51,12 @@ class ConfigTest extends TestCase
     $this->assertEquals("/var/www/html", self::$config->getRootDirectory());
   }
 
+  public function testSetHttpClient()
+  {
+    self::$config->setHttpClient(new \GuzzleHttp\Client());
+    $this->assertInstanceOf(\GuzzleHttp\Client::class, self::$config->getHttpClient());
+  }
+
   public function testReset()
   {
     self::$config->reset();
