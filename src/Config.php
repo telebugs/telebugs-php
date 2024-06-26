@@ -6,6 +6,8 @@ class Config
 {
   private const ERROR_API_URL = "https://api.telebugs.com/2024-03-28/errors";
 
+  private $httpClient;
+
   private $apiKey;
   private $apiURL;
   private $rootDirectory;
@@ -27,9 +29,20 @@ class Config
 
   public function reset(): void
   {
+    $this->httpClient = null;
     $this->apiKey = null;
     $this->apiURL = self::ERROR_API_URL;
     $this->rootDirectory = "";
+  }
+
+  public function setHttpClient($httpClient): void
+  {
+    $this->httpClient = $httpClient;
+  }
+
+  public function getHttpClient()
+  {
+    return $this->httpClient;
   }
 
   public function getApiKey(): ?string
@@ -64,6 +77,9 @@ class Config
 
   public function configure(array $options): void
   {
+    if (isset($options['http_client'])) {
+      $this->setHttpClient($options['http_client']);
+    }
     if (isset($options['api_key'])) {
       $this->setApiKey($options['api_key']);
     }

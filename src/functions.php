@@ -6,13 +6,14 @@ namespace Telebugs;
 
 use Telebugs\Config;
 use Telebugs\Reporter;
+use Telebugs\Promise;
 
 function configure(array $options = []): void
 {
   Config::getInstance()->configure($options);
 }
 
-function report(\Throwable $e): void
+function report(\Throwable $e): Promise
 {
-  Reporter::getInstance()->report($e);
+  return Reporter::getInstance()->report($e);
 }
