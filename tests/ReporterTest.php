@@ -20,7 +20,7 @@ class ReporterTest extends TestCase
         Config::getInstance()->reset();
     }
 
-    public function testReport()
+    public function testReport(): void
     {
         $mock = new MockHandler([
             new Response(201, [], '{"id":123}'),

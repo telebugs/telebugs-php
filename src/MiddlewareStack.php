@@ -7,7 +7,10 @@ use Telebugs\Report;
 
 class MiddlewareStack
 {
-  private $middlewares;
+  /**
+   * @var BaseMiddleware[]
+   */
+  private array $middlewares;
 
   public function __construct()
   {
@@ -36,6 +39,9 @@ class MiddlewareStack
     });
   }
 
+  /**
+   * @return BaseMiddleware[]
+   */
   public function getMiddlewares(): array
   {
     return $this->middlewares;

@@ -10,29 +10,34 @@ class PromiseTest extends TestCase
 {
   public function testThen(): void
   {
-    $promise = new Promise(new \GuzzleHttp\Promise\FulfilledPromise(1));
+    $promise = new Promise(new \GuzzleHttp\Promise\FulfilledPromise(['id' => 1]));
     $newPromise = $promise->then(function ($value) {
-      return $value + 1;
+      $value['id']++;
+      return $value;
     });
 
-    $this->assertEquals(2, $newPromise->wait());
+    $val = $newPromise->wait();
+    $this->assertEquals(2, $val['id']);
   }
 
   public function testOtherwise(): void
   {
-    $promise = new Promise(new \GuzzleHttp\Promise\RejectedPromise(1));
+    $promise = new Promise(new \GuzzleHttp\Promise\RejectedPromise(['id' => 1]));
     $newPromise = $promise->otherwise(function ($value) {
-      return $value + 1;
+      $value['id']++;
+      return $value;
     });
 
-    $this->assertEquals(2, $newPromise->wait());
+    $val = $newPromise->wait();
+    $this->assertEquals(2, $val['id']);
   }
 
   public function testWait(): void
   {
-    $promise = new Promise(new \GuzzleHttp\Promise\FulfilledPromise(1));
+    $promise = new Promise(new \GuzzleHttp\Promise\FulfilledPromise(['id' => 1]));
 
-    $this->assertEquals(1, $promise->wait());
+    $val = $promise->wait();
+    $this->assertEquals(1, $val['id']);
   }
 
   public function testGetState(): void

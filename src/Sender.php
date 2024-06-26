@@ -5,6 +5,7 @@ namespace Telebugs;
 use GuzzleHttp;
 
 use Telebugs\Promise;
+use Telebugs\Config;
 
 use Psr\Http\Message\ResponseInterface;
 
@@ -14,10 +15,10 @@ class Sender
 
   private const USER_AGENT = 'telebugs-php/' . Reporter::VERSION . ' (php/' . PHP_VERSION . ')';
 
-  private $config;
+  private Config $config;
 
-  private $client;
-  private $authorization;
+  private \GuzzleHttp\Client $client;
+  private string $authorization;
 
   public function __construct()
   {

@@ -6,13 +6,13 @@ class Config
 {
   private const ERROR_API_URL = "https://api.telebugs.com/2024-03-28/errors";
 
-  private $httpClient;
+  private ?\GuzzleHttp\Client $httpClient;
 
-  private $apiKey;
-  private $apiURL;
-  private $rootDirectory;
+  private string $apiKey;
+  private string $apiURL;
+  private string $rootDirectory;
 
-  private static $instance;
+  private static ?Config $instance = null;
 
   public static function getInstance(): Config
   {
@@ -30,17 +30,17 @@ class Config
   public function reset(): void
   {
     $this->httpClient = null;
-    $this->apiKey = null;
+    $this->apiKey = "";
     $this->apiURL = self::ERROR_API_URL;
     $this->rootDirectory = "";
   }
 
-  public function setHttpClient($httpClient): void
+  public function setHttpClient(?\GuzzleHttp\Client $httpClient): void
   {
     $this->httpClient = $httpClient;
   }
 
-  public function getHttpClient()
+  public function getHttpClient(): ?\GuzzleHttp\Client
   {
     return $this->httpClient;
   }
@@ -75,6 +75,7 @@ class Config
     $this->rootDirectory = $rootDirectory;
   }
 
+  // @phpstan-ignore missingType.iterableValue
   public function configure(array $options): void
   {
     if (isset($options['http_client'])) {
