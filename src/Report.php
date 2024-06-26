@@ -23,10 +23,13 @@ class Report
 
   private function errorsAsJson(\Throwable $e): array
   {
-    return [
-      'type' => get_class($e),
-      'message' => $e->getMessage(),
-      'backtrace' => [],
-    ];
+    $wrappedError = new WrappedError($e);
+    return array_map(function ($e) {
+      return [
+        'type' => get_class($e),
+        'message' => $e->getMessage(),
+        'backtrace' => []
+      ];
+    }, $wrappedError->unwrap());
   }
 }
