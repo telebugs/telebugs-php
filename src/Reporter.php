@@ -8,7 +8,9 @@ class Reporter
 {
   public const VERSION = '0.1.0';
 
-  private static $instance;
+  private static ?Reporter $instance = null;
+
+  private Sender $sender;
 
   public static function getInstance(): Reporter
   {
@@ -18,8 +20,6 @@ class Reporter
     return self::$instance;
   }
 
-  private $sender;
-
   public function __construct()
   {
     $this->sender = new Sender();
@@ -27,7 +27,7 @@ class Reporter
 
   public function report(\Throwable $e): Promise
   {
-    return $this->sender->send(json_encode([
+    $json = json_encode([
       'errors' => [
         [
           'type' => get_class($e),
@@ -41,6 +41,12 @@ class Reporter
           ],
         ]
       ]
-    ]));
+    ]);
+
+    if ($json === FALSE) {
+      throw new \Exception('Failed to encode JSON');
+    }
+
+    return $this->sender->send($json);
   }
 }

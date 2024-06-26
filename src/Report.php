@@ -11,7 +11,8 @@ class Report
     'platform' => ['name' => 'PHP', 'version' => PHP_VERSION]
   ];
 
-  public $data;
+  // @phpstan-ignore missingType.iterableValue
+  public array $data;
 
   public function __construct(\Throwable $e)
   {
@@ -21,6 +22,7 @@ class Report
     ];
   }
 
+  // @phpstan-ignore missingType.iterableValue
   private function errorsAsJson(\Throwable $e): array
   {
     $wrappedError = new WrappedError($e);

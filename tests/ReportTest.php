@@ -30,7 +30,7 @@ class ReportTest extends TestCase
     $this->assertEquals("error 1", $error2['message']);
   }
 
-  public function testDataReporters()
+  public function testDataReporters(): void
   {
     $r = new Report(new \Exception());
     $this->assertEquals([Report::REPORTER], $r->data['reporters']);

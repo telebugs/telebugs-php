@@ -13,7 +13,12 @@ class TestFilteringMiddleware extends BaseMiddleware
 {
   public function __invoke($report): void
   {
-    $report->data['errors'] = "[Filtered]";
+    $report->data['errors'] = [
+      [
+        "type" => "Exception",
+        "message" => "[Filtered]",
+      ]
+    ];
   }
 
   public function getWeight(): int
@@ -26,7 +31,7 @@ class TestNewDataMiddleware extends BaseMiddleware
 {
   public function __invoke($report): void
   {
-    $report->data['new_data'] = "new data";
+    $report->data['new_data'] = [["data" => "new data"]];
   }
 
   public function getWeight(): int
@@ -46,8 +51,8 @@ class MiddlewareStackTest extends TestCase
     $report = new Report(new \Exception("error message"));
     $stack($report);
 
-    $this->assertEquals("[Filtered]", $report->data['errors']);
-    $this->assertEquals("new data", $report->data['new_data']);
+    $this->assertEquals("[Filtered]", $report->data['errors'][0]['message']);
+    $this->assertEquals("new data", $report->data['new_data'][0]['data']);
   }
 
   public function testWeight(): void

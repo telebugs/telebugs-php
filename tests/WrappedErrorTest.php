@@ -6,14 +6,14 @@ use Telebugs\WrappedError;
 
 class WrappedErrorTest extends TestCase
 {
-  public function testUnwrapsErrorsWithoutAPreviousError()
+  public function testUnwrapsErrorsWithoutAPreviousError(): void
   {
     $error = new Exception();
     $wrapped = new WrappedError($error);
     $this->assertEquals([$error], $wrapped->unwrap());
   }
 
-  public function testUnwrapsNoMoreThan3NestedErrors()
+  public function testUnwrapsNoMoreThan3NestedErrors(): void
   {
     try {
       throw new Exception("error 1", 1);

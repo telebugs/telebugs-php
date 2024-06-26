@@ -8,61 +8,62 @@ use Telebugs\Config;
 
 class ConfigTest extends TestCase
 {
-  protected static $config;
+  protected static Config $config;
 
   protected function setUp(): void
   {
-    self::$config = Config::getInstance();
+    $this->config = new Config();
   }
 
-  protected function tearDown(): void
+  public function testSetApiKey(): void
   {
-    self::$config->reset();
+    $this->config->setApiKey("123456");
+    $this->assertEquals("123456", $this->config->getApiKey());
   }
 
-  public function testSetApiKey()
+  public function testSetApiURL(): void
   {
-    self::$config->setApiKey("123456");
-    $this->assertEquals("123456", self::$config->getApiKey());
+    $this->config->setApiURL("https://api.telebugs.com/2024-03-28/errors");
+    $this->assertEquals("https://api.telebugs.com/2024-03-28/errors", $this->config->getApiURL());
   }
 
-  public function testSetApiURL()
+  public function testSetRootDirectory(): void
   {
-    self::$config->setApiURL("https://api.telebugs.com/2024-03-28/errors");
-    $this->assertEquals("https://api.telebugs.com/2024-03-28/errors", self::$config->getApiURL());
+    $this->config->setRootDirectory("/var/www/html");
+    $this->assertEquals("/var/www/html", $this->config->getRootDirectory());
   }
 
-  public function testSetRootDirectory()
+  public function testConfigure(): void
   {
-    self::$config->setRootDirectory("/var/www/html");
-    $this->assertEquals("/var/www/html", self::$config->getRootDirectory());
-  }
-
-  public function testConfigure()
-  {
-    self::$config->configure([
+    $this->config->configure([
       'api_key' => "123456",
       'api_url' => "https://api.telebugs.com/2024-03-28/errors",
       'root_directory' => "/var/www/html"
     ]);
 
-    $this->assertEquals("123456", self::$config->getApiKey());
-    $this->assertEquals("https://api.telebugs.com/2024-03-28/errors", self::$config->getApiURL());
-    $this->assertEquals("/var/www/html", self::$config->getRootDirectory());
+    $this->assertEquals("123456", $this->config->getApiKey());
+    $this->assertEquals("https://api.telebugs.com/2024-03-28/errors", $this->config->getApiURL());
+    $this->assertEquals("/var/www/html", $this->config->getRootDirectory());
   }
 
-  public function testSetHttpClient()
+  public function testSetHttpClient(): void
   {
-    self::$config->setHttpClient(new \GuzzleHttp\Client());
-    $this->assertInstanceOf(\GuzzleHttp\Client::class, self::$config->getHttpClient());
+    $this->config->setHttpClient(new \GuzzleHttp\Client());
+    $this->assertInstanceOf(\GuzzleHttp\Client::class, $this->config->getHttpClient());
   }
 
-  public function testReset()
+  public function testReset(): void
   {
-    self::$config->reset();
+    $this->config->configure([
+      'api_key' => "123456",
+      'api_url' => "https://api.telebugs.com/2024-03-28/errors",
+      'root_directory' => "/var/www/html"
+    ]);
 
-    $this->assertNull(self::$config->getApiKey());
-    $this->assertEquals("https://api.telebugs.com/2024-03-28/errors", self::$config->getApiURL());
-    $this->assertEquals("", self::$config->getRootDirectory());
+    $this->config->reset();
+
+    $this->assertEquals("", $this->config->getApiKey());
+    $this->assertEquals("https://api.telebugs.com/2024-03-28/errors", $this->config->getApiURL());
+    $this->assertEquals("", $this->config->getRootDirectory());
   }
 }

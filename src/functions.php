@@ -8,6 +8,9 @@ use Telebugs\Config;
 use Telebugs\Reporter;
 use Telebugs\Promise;
 
+/**
+ * @param array<String, mixed> $options
+ */
 function configure(array $options = []): void
 {
   Config::getInstance()->configure($options);
