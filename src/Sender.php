@@ -2,10 +2,9 @@
 
 namespace Telebugs;
 
-use GuzzleHttp;
-
 use Telebugs\Promise;
 use Telebugs\Config;
+use Telebugs\Report;
 
 use Psr\Http\Message\ResponseInterface;
 
@@ -25,10 +24,10 @@ class Sender
     $this->authorization = 'Bearer ' . $this->config->getApiKey();
   }
 
-  public function send(string $data): Promise
+  public function send(Report $report): Promise
   {
     $guzzlePromise = $this->config->getHttpClient()->postAsync($this->config->getApiURL(), [
-      'body' => $data,
+      'body' => $report->toJSON(),
       'headers' => [
         'Content-Type' => self::CONTENT_TYPE,
         'User-Agent' => self::USER_AGENT,

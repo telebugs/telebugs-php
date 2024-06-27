@@ -35,4 +35,13 @@ class ReportTest extends TestCase
     $r = new Report(new \Exception());
     $this->assertEquals([Report::REPORTER], $r->data['reporters']);
   }
+
+  public function testIgnored(): void
+  {
+    $r = new Report(new \Exception());
+    $this->assertFalse($r->ignored);
+
+    $r->ignored = true;
+    $this->assertTrue($r->ignored);
+  }
 }
