@@ -17,25 +17,17 @@ class Sender
 
   private Config $config;
 
-  private \GuzzleHttp\Client $client;
   private string $authorization;
 
   public function __construct()
   {
     $this->config = Config::getInstance();
-
-    if ($this->config->getHttpClient() !== null) {
-      $this->client = $this->config->getHttpClient();
-    } else {
-      $this->client = new GuzzleHttp\Client();
-    }
-
     $this->authorization = 'Bearer ' . $this->config->getApiKey();
   }
 
   public function send(string $data): Promise
   {
-    $guzzlePromise = $this->client->postAsync($this->config->getApiURL(), [
+    $guzzlePromise = $this->config->getHttpClient()->postAsync($this->config->getApiURL(), [
       'body' => $data,
       'headers' => [
         'Content-Type' => self::CONTENT_TYPE,

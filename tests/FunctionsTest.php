@@ -24,7 +24,9 @@ class FunctionsTest extends TestCase
 
   public function testConfigure(): void
   {
-    configure(['api_key' => "999"]);
+    configure(function ($config) {
+      $config->setApiKey("999");
+    });
 
     $this->assertEquals("999", Config::getInstance()->getApiKey());
   }
@@ -34,12 +36,9 @@ class FunctionsTest extends TestCase
     $mock = new MockHandler([
       new Response(201, [], '{"id":123}'),
     ]);
-    $handlerStack = HandlerStack::create($mock);
-
-    configure([
-      'api_key' => "1:a0480999c3d12d13d4cdbadbf0fc2ba3",
-      'http_client' => new Client(['handler' => $handlerStack]),
-    ]);
+    configure(function ($config) use ($mock) {
+      $config->setHttpClient(new Client(['handler' => HandlerStack::create($mock)]));
+    });
 
     $res = report(new \Exception("Test exception"))->wait();
 

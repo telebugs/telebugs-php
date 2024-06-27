@@ -35,11 +35,9 @@ class ConfigTest extends TestCase
 
   public function testConfigure(): void
   {
-    $this->config->configure([
-      'api_key' => "123456",
-      'api_url' => "https://api.telebugs.com/2024-03-28/errors",
-      'root_directory' => "/var/www/html"
-    ]);
+    $this->config->setApiKey("123456");
+    $this->config->setApiURL("https://api.telebugs.com/2024-03-28/errors");
+    $this->config->setRootDirectory("/var/www/html");
 
     $this->assertEquals("123456", $this->config->getApiKey());
     $this->assertEquals("https://api.telebugs.com/2024-03-28/errors", $this->config->getApiURL());
@@ -54,11 +52,9 @@ class ConfigTest extends TestCase
 
   public function testReset(): void
   {
-    $this->config->configure([
-      'api_key' => "123456",
-      'api_url' => "https://api.telebugs.com/2024-03-28/errors",
-      'root_directory' => "/var/www/html"
-    ]);
+    $this->config->setApiKey("123456");
+    $this->config->setApiURL("https://example.com");
+    $this->config->setRootDirectory("/var/www/html");
 
     $this->config->reset();
 

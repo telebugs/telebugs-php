@@ -8,12 +8,9 @@ use Telebugs\Config;
 use Telebugs\Reporter;
 use Telebugs\Promise;
 
-/**
- * @param array<String, mixed> $options
- */
-function configure(array $options = []): void
+function configure(\Closure $callback): void
 {
-  Config::getInstance()->configure($options);
+  $callback(Config::getInstance());
 }
 
 function report(\Throwable $e): Promise
