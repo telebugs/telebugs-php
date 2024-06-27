@@ -14,8 +14,13 @@ class Report
   // @phpstan-ignore missingType.iterableValue
   public array $data;
 
+  public bool $ignored = false;
+
+  private \Throwable $error;
+
   public function __construct(\Throwable $e)
   {
+    $this->error = $e;
     $this->data = [
       'errors' => $this->errorsAsJson($e),
       'reporters' => [self::REPORTER]
@@ -33,5 +38,30 @@ class Report
         'backtrace' => []
       ];
     }, $wrappedError->unwrap());
+  }
+
+  public function toJSON(): string
+  {
+    $json = json_encode([
+      'errors' => [
+        [
+          'type' => get_class($this->error),
+          'message' => $this->error->getMessage(),
+          'backtrace' => [
+            [
+              'file' => $this->error->getFile(),
+              'line' => $this->error->getLine(),
+              'function' => 'funcName'
+            ]
+          ],
+        ]
+      ]
+    ]);
+
+    if ($json === FALSE) {
+      throw new \Exception('Failed to encode JSON');
+    }
+
+    return $json;
   }
 }

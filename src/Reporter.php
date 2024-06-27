@@ -2,7 +2,11 @@
 
 namespace Telebugs;
 
+use GuzzleHttp\Promise\FulfilledPromise;
+
 use Telebugs\Promise;
+use Telebugs\Sender;
+use Telebugs\Config;
 
 class Reporter
 {
@@ -11,6 +15,7 @@ class Reporter
   private static ?Reporter $instance = null;
 
   private Sender $sender;
+  private Config $config;
 
   public static function getInstance(): Reporter
   {
@@ -23,30 +28,18 @@ class Reporter
   public function __construct()
   {
     $this->sender = new Sender();
+    $this->config = Config::getInstance();
   }
 
   public function report(\Throwable $e): Promise
   {
-    $json = json_encode([
-      'errors' => [
-        [
-          'type' => get_class($e),
-          'message' => $e->getMessage(),
-          'backtrace' => [
-            [
-              'file' => $e->getFile(),
-              'line' => $e->getLine(),
-              'function' => 'funcName'
-            ]
-          ],
-        ]
-      ]
-    ]);
+    $report = new Report($e);
 
-    if ($json === FALSE) {
-      throw new \Exception('Failed to encode JSON');
+    $this->config->middleware()($report);
+    if ($report->ignored) {
+      return new Promise(new FulfilledPromise("Report ignored"));
     }
 
-    return $this->sender->send($json);
+    return $this->sender->send($report);
   }
 }

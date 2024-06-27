@@ -11,6 +11,7 @@ class Config
   private string $apiKey;
   private string $apiURL;
   private string $rootDirectory;
+  public MiddlewareStack $middlewareStack;
 
   private static ?Config $instance = null;
 
@@ -33,6 +34,8 @@ class Config
     $this->apiKey = "";
     $this->apiURL = self::ERROR_API_URL;
     $this->rootDirectory = "";
+
+    $this->middlewareStack = new MiddlewareStack();
   }
 
   public function setHttpClient(\GuzzleHttp\Client $httpClient): void
@@ -73,5 +76,10 @@ class Config
   public function setRootDirectory(string $rootDirectory): void
   {
     $this->rootDirectory = $rootDirectory;
+  }
+
+  public function middleware(): MiddlewareStack
+  {
+    return $this->middlewareStack;
   }
 }
