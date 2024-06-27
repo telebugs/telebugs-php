@@ -6,7 +6,7 @@ class Config
 {
   private const ERROR_API_URL = "https://api.telebugs.com/2024-03-28/errors";
 
-  private ?\GuzzleHttp\Client $httpClient;
+  private \GuzzleHttp\Client $httpClient;
 
   private string $apiKey;
   private string $apiURL;
@@ -29,18 +29,18 @@ class Config
 
   public function reset(): void
   {
-    $this->httpClient = null;
+    $this->httpClient = new \GuzzleHttp\Client();
     $this->apiKey = "";
     $this->apiURL = self::ERROR_API_URL;
     $this->rootDirectory = "";
   }
 
-  public function setHttpClient(?\GuzzleHttp\Client $httpClient): void
+  public function setHttpClient(\GuzzleHttp\Client $httpClient): void
   {
     $this->httpClient = $httpClient;
   }
 
-  public function getHttpClient(): ?\GuzzleHttp\Client
+  public function getHttpClient(): \GuzzleHttp\Client
   {
     return $this->httpClient;
   }
@@ -73,22 +73,5 @@ class Config
   public function setRootDirectory(string $rootDirectory): void
   {
     $this->rootDirectory = $rootDirectory;
-  }
-
-  // @phpstan-ignore missingType.iterableValue
-  public function configure(array $options): void
-  {
-    if (isset($options['http_client'])) {
-      $this->setHttpClient($options['http_client']);
-    }
-    if (isset($options['api_key'])) {
-      $this->setApiKey($options['api_key']);
-    }
-    if (isset($options['api_url'])) {
-      $this->setApiURL($options['api_url']);
-    }
-    if (isset($options['root_directory'])) {
-      $this->setRootDirectory($options['root_directory']);
-    }
   }
 }
