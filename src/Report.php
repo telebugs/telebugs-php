@@ -3,6 +3,7 @@
 namespace Telebugs;
 
 use Telebugs\Reporter;
+use Telebugs\Backtrace;
 
 class Report
 {
@@ -16,11 +17,8 @@ class Report
 
   public bool $ignored = false;
 
-  private \Throwable $error;
-
   public function __construct(\Throwable $e)
   {
-    $this->error = $e;
     $this->data = [
       'errors' => $this->errorsAsJson($e),
       'reporters' => [self::REPORTER]
@@ -35,28 +33,14 @@ class Report
       return [
         'type' => get_class($e),
         'message' => $e->getMessage(),
-        'backtrace' => []
+        'backtrace' => Backtrace::parse($e),
       ];
     }, $wrappedError->unwrap());
   }
 
   public function toJSON(): string
   {
-    $json = json_encode([
-      'errors' => [
-        [
-          'type' => get_class($this->error),
-          'message' => $this->error->getMessage(),
-          'backtrace' => [
-            [
-              'file' => $this->error->getFile(),
-              'line' => $this->error->getLine(),
-              'function' => 'funcName'
-            ]
-          ],
-        ]
-      ]
-    ]);
+    $json = json_encode($this->data);
 
     if ($json === FALSE) {
       throw new \Exception('Failed to encode JSON');
