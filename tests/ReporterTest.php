@@ -65,7 +65,7 @@ class ReporterTest extends TestCase
         });
 
         $reporter = new Reporter();
-        $res = $reporter->report(new \Exception("Test exception"))->wait();
+        $reporter->report(new \Exception("Test exception"))->wait();
 
         $this->assertCount(0, $this->container);
     }
