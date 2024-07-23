@@ -2,6 +2,8 @@
 
 namespace Telebugs;
 
+use Telebugs\MiddlewareStack;
+
 class Config
 {
   private const ERROR_API_URL = "https://api.telebugs.com/2024-03-28/errors";
@@ -33,7 +35,19 @@ class Config
     $this->httpClient = new \GuzzleHttp\Client();
     $this->apiKey = "";
     $this->apiURL = self::ERROR_API_URL;
-    $this->rootDirectory = "";
+
+    // Not sure if Composer is always available, better check first
+    if (class_exists('\Composer\Autoload\ClassLoader', false)) {
+      $reflection = new \ReflectionClass(\Composer\Autoload\ClassLoader::class);
+      $fileName = $reflection->getFileName();
+      if ($fileName === false) {
+        $this->rootDirectory = $this->findRootDirectory();
+      } else {
+        $this->rootDirectory = dirname($fileName);
+      }
+    } else {
+      $this->rootDirectory = $this->findRootDirectory();
+    }
 
     $this->middlewareStack = new MiddlewareStack();
   }
@@ -81,5 +95,27 @@ class Config
   public function middleware(): MiddlewareStack
   {
     return $this->middlewareStack;
+  }
+
+  private function findRootDirectory(): string
+  {
+    // Start with the current directory
+    $dir = __DIR__;
+
+    // Go up the directory tree until we find a marker file/directory
+    while ($dir !== '/' && $dir !== '\\') {
+      // Check for common project root markers
+      if (
+        file_exists($dir . '/composer.json') ||
+        file_exists($dir . '/vendor') ||
+        file_exists($dir . '/.git')
+      ) {
+        return $dir;
+      }
+      $dir = dirname($dir);
+    }
+
+    // If we can't determine the root, return the current directory
+    return __DIR__;
   }
 }

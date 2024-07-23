@@ -17,8 +17,11 @@ class Report
 
   public bool $ignored = false;
 
+  private Config $config;
+
   public function __construct(\Throwable $e)
   {
+    $this->config = Config::getInstance();
     $this->data = [
       'errors' => $this->errorsAsJson($e),
       'reporters' => [self::REPORTER]
@@ -33,7 +36,7 @@ class Report
       return [
         'type' => get_class($e),
         'message' => $e->getMessage(),
-        'backtrace' => Backtrace::parse($e),
+        'backtrace' => $this->attachCode($e, Backtrace::parse($e)),
       ];
     }, $wrappedError->unwrap());
   }
@@ -47,5 +50,42 @@ class Report
     }
 
     return $json;
+  }
+
+  // @phpstan-ignore-next-line
+  private function attachCode(\Throwable $e, array $backtrace): array
+  {
+    foreach ($backtrace as &$frame) {
+      if (!isset($frame['file']) || !file_exists($frame['file'])) {
+        continue;
+      }
+      if (!isset($frame['line'])) {
+        continue;
+      }
+      if (!$this->frameBelongsToRootDirectory($frame['file'])) {
+        continue;
+      }
+      if (!is_readable($frame['file'])) {
+        continue;
+      }
+
+      $frame['code'] = CodeHunk::get($frame['file'], $frame['line']);
+    }
+
+    // Exception object `getTrace` does not return file and line number for the first line
+    // http://php.net/manual/en/exception.gettrace.php#107563
+    array_unshift($backtrace, [
+      'file' => $e->getFile(),
+      'line' => $e->getLine(),
+      'function' => '',
+      'code' => CodeHunk::get($e->getFile(), $e->getLine()),
+    ]);
+    return $backtrace;
+  }
+
+  private function frameBelongsToRootDirectory(string $file): bool
+  {
+    $root = $this->config->getRootDirectory();
+    return strpos($file, $root) === 0;
   }
 }

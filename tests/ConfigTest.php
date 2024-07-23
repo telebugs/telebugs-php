@@ -67,7 +67,7 @@ class ConfigTest extends TestCase
 
     $this->assertEquals("", $this->config->getApiKey());
     $this->assertEquals("https://api.telebugs.com/2024-03-28/errors", $this->config->getApiURL());
-    $this->assertEquals("", $this->config->getRootDirectory());
+    $this->assertEquals(rtrim(rtrim(__DIR__, '/tests'), '\tests') . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'composer', $this->config->getRootDirectory());
     $this->assertEquals(0, count($this->config->middleware()->getMiddlewares()));
   }
 }
