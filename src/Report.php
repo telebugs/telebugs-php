@@ -4,31 +4,41 @@ namespace Telebugs;
 
 use Telebugs\Reporter;
 use Telebugs\Backtrace;
+use Telebugs\CodeHunk;
+use Telebugs\Config;
+use Telebugs\Truncator;
 
-class Report
+class Report implements \JsonSerializable
 {
   const REPORTER = [
     'library' => ['name' => 'telebugs', 'version' => Reporter::VERSION],
     'platform' => ['name' => 'PHP', 'version' => PHP_VERSION]
   ];
 
-  // @phpstan-ignore missingType.iterableValue
   public array $data;
 
   public bool $ignored = false;
 
   private Config $config;
 
+  // The maximum size of the JSON data in bytes
+  private const MAX_REPORT_SIZE = 64000;
+
+  // The maximum size of hashes, arrays and strings in the report.
+  private const DATA_MAX_SIZE = 10000;
+
+  private Truncator $truncator;
+
   public function __construct(\Throwable $e)
   {
     $this->config = Config::getInstance();
+    $this->truncator = new Truncator(self::DATA_MAX_SIZE);
     $this->data = [
       'errors' => $this->errorsAsJson($e),
       'reporters' => [self::REPORTER]
     ];
   }
 
-  // @phpstan-ignore missingType.iterableValue
   private function errorsAsJson(\Throwable $e): array
   {
     $wrappedError = new WrappedError($e);
@@ -41,15 +51,27 @@ class Report
     }, $wrappedError->unwrap());
   }
 
-  public function toJSON(): string
+  public function jsonSerialize(): mixed
   {
-    $json = json_encode($this->data);
+    return $this->ensureMaxReportSize($this->data);
+  }
 
-    if ($json === FALSE) {
-      throw new \Exception('Failed to encode JSON');
-    }
+  private function ensureMaxReportSize(mixed $data): mixed
+  {
+    do {
+      $truncatedData = $this->truncator->truncate($data);
+      $json = json_encode($truncatedData);
 
-    return $json;
+      if ($json === false) {
+        throw new \Exception('Failed to encode JSON');
+      }
+
+      if (strlen($json) <= self::MAX_REPORT_SIZE) {
+        return $truncatedData;
+      }
+    } while ($this->truncator->reduceMaxSize() > 0);
+
+    throw new \Exception('Failed to truncate report to acceptable size');
   }
 
   // @phpstan-ignore-next-line

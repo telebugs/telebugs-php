@@ -27,7 +27,7 @@ class Sender
   public function send(Report $report): Promise
   {
     $guzzlePromise = $this->config->getHttpClient()->postAsync($this->config->getApiURL(), [
-      'body' => $report->toJSON(),
+      'body' => json_encode($report),
       'headers' => [
         'Content-Type' => self::CONTENT_TYPE,
         'User-Agent' => self::USER_AGENT,
