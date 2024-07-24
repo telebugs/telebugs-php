@@ -8,21 +8,20 @@ use Telebugs\CodeHunk;
 use Telebugs\Config;
 use Telebugs\Truncator;
 
-class Report
+class Report implements \JsonSerializable
 {
   const REPORTER = [
     'library' => ['name' => 'telebugs', 'version' => Reporter::VERSION],
     'platform' => ['name' => 'PHP', 'version' => PHP_VERSION]
   ];
 
-  // @phpstan-ignore missingType.iterableValue
   public array $data;
 
   public bool $ignored = false;
 
   private Config $config;
 
-  // The maxium size of the JSON data in bytes
+  // The maximum size of the JSON data in bytes
   private const MAX_REPORT_SIZE = 64000;
 
   // The maximum size of hashes, arrays and strings in the report.
@@ -40,7 +39,6 @@ class Report
     ];
   }
 
-  // @phpstan-ignore missingType.iterableValue
   private function errorsAsJson(\Throwable $e): array
   {
     $wrappedError = new WrappedError($e);
@@ -53,20 +51,24 @@ class Report
     }, $wrappedError->unwrap());
   }
 
-  public function toJSON(): string
+  public function jsonSerialize(): mixed
+  {
+    return $this->ensureMaxReportSize($this->data);
+  }
+
+  private function ensureMaxReportSize(mixed $data): mixed
   {
     do {
-      $json = json_encode($this->data);
+      $truncatedData = $this->truncator->truncate($data);
+      $json = json_encode($truncatedData);
 
       if ($json === false) {
         throw new \Exception('Failed to encode JSON');
       }
 
-      if (strlen($json) <= self::DATA_MAX_SIZE) {
-        return $json;
+      if (strlen($json) <= self::MAX_REPORT_SIZE) {
+        return $truncatedData;
       }
-
-      $this->truncate();
     } while ($this->truncator->reduceMaxSize() > 0);
 
     throw new \Exception('Failed to truncate report to acceptable size');
@@ -107,12 +109,5 @@ class Report
   {
     $root = $this->config->getRootDirectory();
     return strpos($file, $root) === 0;
-  }
-
-  private function truncate(): void
-  {
-    foreach ($this->data as $key => $value) {
-      $this->data[$key] = $this->truncator->truncate($value);
-    }
   }
 }

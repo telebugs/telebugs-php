@@ -17,7 +17,7 @@ class Truncator
     $this->maxSize = $maxSize;
   }
 
-  public function truncate($object)
+  public function truncate(mixed $object): mixed
   {
     return $this->truncateRecursive($object, [], 0);
   }
@@ -27,7 +27,7 @@ class Truncator
     return $this->maxSize = intdiv($this->maxSize, 2);
   }
 
-  private function truncateRecursive($object, array $seen, int $depth)
+  private function truncateRecursive(mixed $object, array $seen, int $depth): mixed
   {
     if ($depth >= self::MAX_DEPTH) {
       return self::TRUNCATED;
@@ -75,6 +75,7 @@ class Truncator
     $byteCount = 0;
     $chars = preg_split('//u', $fixedStr, -1, PREG_SPLIT_NO_EMPTY);
 
+    // @phpstan-ignore-next-line
     foreach ($chars as $char) {
       $charByteCount = strlen($char);
       if ($byteCount + $charByteCount > $this->maxSize) {
@@ -87,15 +88,16 @@ class Truncator
     return $truncated . self::TRUNCATED;
   }
 
-  private function truncateObject($object): string
+  private function truncateObject(object|string $object): string
   {
     if ($object instanceof \Closure) {
       return '#<Closure>';
     }
     if ($object instanceof JsonSerializable || method_exists($object, '__toString')) {
+      // @phpstan-ignore-next-line
       return $this->truncateString((string) $object);
     }
-    return $this->truncateString(sprintf('#<%s>', get_class($object)));
+    return $this->truncateString(sprintf('#<%s>', get_class((object) $object)));
   }
 
   private function truncateArray(array $array, array $seen, int $depth): array
@@ -113,6 +115,7 @@ class Truncator
   private function truncateStdClass(\stdClass $object, array $seen, int $depth): \stdClass
   {
     $truncatedObject = new \stdClass();
+    // @phpstan-ignore-next-line
     foreach ($object as $key => $value) {
       if (count((array)$truncatedObject) >= $this->maxSize) {
         break;
@@ -122,6 +125,7 @@ class Truncator
     return $truncatedObject;
   }
 
+  // @phpstan-ignore-next-line
   private function truncateResource($resource): string
   {
     return "Resource id #" . intval($resource);

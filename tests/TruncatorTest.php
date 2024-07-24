@@ -122,6 +122,9 @@ class TruncatorTest extends TestCase
   public function testTruncateResource(): void
   {
     $input = fopen('php://memory', 'r');
+    if ($input === false) {
+      $this->fail('Failed to open resource');
+    }
     $result = $this->truncator->truncate($input);
     $this->assertStringStartsWith('Resource id #', $result);
     fclose($input);
