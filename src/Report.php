@@ -4,6 +4,9 @@ namespace Telebugs;
 
 use Telebugs\Reporter;
 use Telebugs\Backtrace;
+use Telebugs\CodeHunk;
+use Telebugs\Config;
+use Telebugs\Truncator;
 
 class Report
 {
@@ -19,9 +22,18 @@ class Report
 
   private Config $config;
 
+  // The maxium size of the JSON data in bytes
+  private const MAX_REPORT_SIZE = 64000;
+
+  // The maximum size of hashes, arrays and strings in the report.
+  private const DATA_MAX_SIZE = 10000;
+
+  private Truncator $truncator;
+
   public function __construct(\Throwable $e)
   {
     $this->config = Config::getInstance();
+    $this->truncator = new Truncator(self::DATA_MAX_SIZE);
     $this->data = [
       'errors' => $this->errorsAsJson($e),
       'reporters' => [self::REPORTER]
@@ -43,13 +55,21 @@ class Report
 
   public function toJSON(): string
   {
-    $json = json_encode($this->data);
+    do {
+      $json = json_encode($this->data);
 
-    if ($json === FALSE) {
-      throw new \Exception('Failed to encode JSON');
-    }
+      if ($json === false) {
+        throw new \Exception('Failed to encode JSON');
+      }
 
-    return $json;
+      if (strlen($json) <= self::DATA_MAX_SIZE) {
+        return $json;
+      }
+
+      $this->truncate();
+    } while ($this->truncator->reduceMaxSize() > 0);
+
+    throw new \Exception('Failed to truncate report to acceptable size');
   }
 
   // @phpstan-ignore-next-line
@@ -87,5 +107,12 @@ class Report
   {
     $root = $this->config->getRootDirectory();
     return strpos($file, $root) === 0;
+  }
+
+  private function truncate(): void
+  {
+    foreach ($this->data as $key => $value) {
+      $this->data[$key] = $this->truncator->truncate($value);
+    }
   }
 }
