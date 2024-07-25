@@ -3,6 +3,7 @@
 namespace Telebugs;
 
 use Telebugs\MiddlewareStack;
+use Telebugs\Middleware\RootDirectoryFilter;
 
 class Config
 {
@@ -50,6 +51,7 @@ class Config
     }
 
     $this->middlewareStack = new MiddlewareStack();
+    $this->middlewareStack->use(new RootDirectoryFilter($this->rootDirectory));
   }
 
   public function setHttpClient(\GuzzleHttp\Client $httpClient): void
@@ -89,7 +91,12 @@ class Config
 
   public function setRootDirectory(string $rootDirectory): void
   {
-    $this->rootDirectory = $rootDirectory;
+    realpath($rootDirectory) or throw new \Exception('Root directory does not exist: ' . $rootDirectory);
+
+    $this->rootDirectory = realpath($rootDirectory);
+
+    $this->middlewareStack->delete(RootDirectoryFilter::class);
+    $this->middlewareStack->use(new RootDirectoryFilter($rootDirectory));
   }
 
   public function middleware(): MiddlewareStack
