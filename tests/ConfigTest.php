@@ -29,19 +29,31 @@ class ConfigTest extends TestCase
 
   public function testSetRootDirectory(): void
   {
-    $this->config->setRootDirectory("/var/www/html");
-    $this->assertEquals("/var/www/html", $this->config->getRootDirectory());
+    if (str_starts_with(strtoupper(PHP_OS), 'WIN')) {
+      $rootDirectory = realpath("D:\\");
+    } else {
+      $rootDirectory = realpath("/tmp");
+    }
+    $this->config->setRootDirectory($rootDirectory);
+    $this->assertEquals($rootDirectory, $this->config->getRootDirectory());
   }
 
   public function testConfigure(): void
   {
     $this->config->setApiKey("123456");
     $this->config->setApiURL("https://api.telebugs.com/2024-03-28/errors");
-    $this->config->setRootDirectory("/var/www/html");
+
+    if (str_starts_with(strtoupper(PHP_OS), 'WIN')) {
+      $rootDirectory = realpath("D:\\");
+    } else {
+      $rootDirectory = realpath("/tmp");
+    }
+
+    $this->config->setRootDirectory($rootDirectory);
 
     $this->assertEquals("123456", $this->config->getApiKey());
     $this->assertEquals("https://api.telebugs.com/2024-03-28/errors", $this->config->getApiURL());
-    $this->assertEquals("/var/www/html", $this->config->getRootDirectory());
+    $this->assertEquals($rootDirectory, $this->config->getRootDirectory());
   }
 
   public function testSetHttpClient(): void
@@ -53,14 +65,18 @@ class ConfigTest extends TestCase
   public function testMiddleware(): void
   {
     $this->config->middleware()->use(new TestIgnoreMiddleware());
-    $this->assertEquals(1, count($this->config->middleware()->getMiddlewares()));
+    $this->assertEquals(2, count($this->config->middleware()->getMiddlewares()));
   }
 
   public function testReset(): void
   {
     $this->config->setApiKey("123456");
     $this->config->setApiURL("https://example.com");
-    $this->config->setRootDirectory("/var/www/html");
+    if (str_starts_with(strtoupper(PHP_OS), 'WIN')) {
+      $this->config->setRootDirectory(realpath("D:\\"));
+    } else {
+      $this->config->setRootDirectory(realpath("/tmp"));
+    }
     $this->config->middleware()->use(new TestIgnoreMiddleware());
 
     $this->config->reset();
@@ -68,6 +84,6 @@ class ConfigTest extends TestCase
     $this->assertEquals("", $this->config->getApiKey());
     $this->assertEquals("https://api.telebugs.com/2024-03-28/errors", $this->config->getApiURL());
     $this->assertEquals(rtrim(rtrim(__DIR__, '/tests'), '\tests') . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'composer', $this->config->getRootDirectory());
-    $this->assertEquals(0, count($this->config->middleware()->getMiddlewares()));
+    $this->assertEquals(1, count($this->config->middleware()->getMiddlewares()));
   }
 }
