@@ -7,6 +7,7 @@
          requireCoverageMetadata="false"
          beStrictAboutCoverageMetadata="false"
          beStrictAboutOutputDuringTests="true"
+         beStrictAboutTestsThatDoNotTestAnything="true"
          failOnRisky="true"
          failOnWarning="true"
          displayDetailsOnTestsThatTriggerWarnings="true">
