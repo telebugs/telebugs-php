@@ -2,10 +2,10 @@
 
 namespace Telebugs;
 
-use Telebugs\Promise;
 use Telebugs\Config;
 use Telebugs\Report;
 
+use GuzzleHttp\Promise\PromiseInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class Sender
@@ -21,9 +21,9 @@ class Sender
     $this->config = Config::getInstance();
   }
 
-  public function send(Report $report): Promise
+  public function send(Report $report): PromiseInterface
   {
-    $guzzlePromise = $this->config->getHttpClient()->postAsync($this->config->getApiURL(), [
+    $promise = $this->config->getHttpClient()->postAsync($this->config->getApiURL(), [
       'body' => json_encode($report),
       'headers' => [
         'Content-Type' => self::CONTENT_TYPE,
@@ -32,7 +32,6 @@ class Sender
       ]
     ]);
 
-    $promise = new Promise($guzzlePromise);
     return $promise->then(function (ResponseInterface $res) {
       return json_decode($res->getBody()->getContents(), true);
     });

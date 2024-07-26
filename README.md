@@ -40,16 +40,13 @@ Telebugs\configure(function ($config) {
     $config->setApiKey("YOUR_API_KEY");
 });
 
-
 try {
     1 / 0;
 } catch (DivisionByZeroError $e) {
-    Telebugs\report($e);
+    Telebugs\report($e)->wait();
 }
 
-sleep(2);
-
-echo "An error was sent to Telebugs asynchronously." .
+echo "An error was sent to Telebugs." .
   "It will appear in your dashboard shortly." .
   "A notification was also sent to your Telegram chat."
 ?>
