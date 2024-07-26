@@ -35,7 +35,7 @@ project:
 <?php
 require 'vendor/autoload.php';
 
-// Configure the package as early as possible in your application.
+// Configure Telebugs as early as possible in your application.
 Telebugs\configure(function ($config) {
     $config->setApiKey("YOUR_API_KEY");
 });
