@@ -10,7 +10,7 @@ use Telebugs\Config;
 
 class Reporter
 {
-  public const VERSION = '0.2.0';
+  public const VERSION = '0.3.0';
 
   private static ?Reporter $instance = null;
 
