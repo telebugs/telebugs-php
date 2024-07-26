@@ -6,14 +6,15 @@ namespace Telebugs;
 
 use Telebugs\Config;
 use Telebugs\Reporter;
-use Telebugs\Promise;
+
+use GuzzleHttp\Promise\PromiseInterface;
 
 function configure(\Closure $callback): void
 {
   $callback(Config::getInstance());
 }
 
-function report(\Throwable $e): Promise
+function report(\Throwable $e): PromiseInterface
 {
   return Reporter::getInstance()->report($e);
 }

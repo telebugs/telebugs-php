@@ -3,8 +3,8 @@
 namespace Telebugs;
 
 use GuzzleHttp\Promise\FulfilledPromise;
+use GuzzleHttp\Promise\PromiseInterface;
 
-use Telebugs\Promise;
 use Telebugs\Sender;
 use Telebugs\Config;
 
@@ -31,13 +31,13 @@ class Reporter
     $this->config = Config::getInstance();
   }
 
-  public function report(\Throwable $e): Promise
+  public function report(\Throwable $e): PromiseInterface
   {
     $report = new Report($e);
 
     $this->config->middleware()($report);
     if ($report->ignored) {
-      return new Promise(new FulfilledPromise("Report ignored"));
+      return new FulfilledPromise("Report ignored");
     }
 
     return $this->sender->send($report);
