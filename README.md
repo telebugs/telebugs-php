@@ -52,8 +52,8 @@ try {
 
 sleep(2);
 
-echo "An error was sent to Telebugs asynchronously.",
-  "It will appear in your dashboard shortly.",
+echo "An error was sent to Telebugs asynchronously." .
+  "It will appear in your dashboard shortly." .
   "A notification was also sent to your Telegram chat."
 ```
 
