@@ -87,6 +87,9 @@ class Report implements \JsonSerializable
       if (!$this->frameBelongsToRootDirectory($frame['file'])) {
         continue;
       }
+      if (preg_match('/vendor\/bundle/', $frame['file'])) {
+        continue;
+      }
       if (!is_readable($frame['file'])) {
         continue;
       }

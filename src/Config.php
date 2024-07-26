@@ -3,6 +3,7 @@
 namespace Telebugs;
 
 use Telebugs\MiddlewareStack;
+use Telebugs\Middleware\ComposerRootFilter;
 use Telebugs\Middleware\RootDirectoryFilter;
 
 class Config
@@ -51,6 +52,7 @@ class Config
     }
 
     $this->middlewareStack = new MiddlewareStack();
+    $this->middlewareStack->use(new ComposerRootFilter());
     $this->middlewareStack->use(new RootDirectoryFilter($this->rootDirectory));
   }
 

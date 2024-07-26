@@ -16,12 +16,9 @@ class Sender
 
   private Config $config;
 
-  private string $authorization;
-
   public function __construct()
   {
     $this->config = Config::getInstance();
-    $this->authorization = 'Bearer ' . $this->config->getApiKey();
   }
 
   public function send(Report $report): Promise
@@ -31,7 +28,7 @@ class Sender
       'headers' => [
         'Content-Type' => self::CONTENT_TYPE,
         'User-Agent' => self::USER_AGENT,
-        'Authorization' => $this->authorization
+        'Authorization' => 'Bearer ' . $this->config->getApiKey()
       ]
     ]);
 
