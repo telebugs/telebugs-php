@@ -65,7 +65,7 @@ class ConfigTest extends TestCase
   public function testMiddleware(): void
   {
     $this->config->middleware()->use(new TestIgnoreMiddleware());
-    $this->assertEquals(2, count($this->config->middleware()->getMiddlewares()));
+    $this->assertEquals(3, count($this->config->middleware()->getMiddlewares()));
   }
 
   public function testReset(): void
@@ -84,6 +84,6 @@ class ConfigTest extends TestCase
     $this->assertEquals("", $this->config->getApiKey());
     $this->assertEquals("https://api.telebugs.com/2024-03-28/errors", $this->config->getApiURL());
     $this->assertEquals(rtrim(rtrim(__DIR__, '/tests'), '\tests') . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'composer', $this->config->getRootDirectory());
-    $this->assertEquals(1, count($this->config->middleware()->getMiddlewares()));
+    $this->assertEquals(2, count($this->config->middleware()->getMiddlewares()));
   }
 }
