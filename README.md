@@ -32,6 +32,7 @@ Initialize the package as early as possible in your application:
 
 ```php
 <?php
+
 Telebugs\configure(function ($config) {
     $config->setApiKey("YOUR_API_KEY")
 });
@@ -41,6 +42,8 @@ This is the minimal example that you can use to test Telebugs for PHP with your
 project:
 
 ```php
+<?php
+
 try {
     1 / 0;
 } catch (DivisionByZeroError $e) {
