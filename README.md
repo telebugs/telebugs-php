@@ -28,21 +28,18 @@ composer require telebugs/telebugs
 
 ## Usage
 
-Initialize the package as early as possible in your application:
-
-```php
-<?php
-
-Telebugs\configure(function ($config) {
-    $config->setApiKey("YOUR_API_KEY")
-});
-```
-
 This is the minimal example that you can use to test Telebugs for PHP with your
 project:
 
 ```php
 <?php
+require 'vendor/autoload.php';
+
+// Configure the package as early as possible in your application.
+Telebugs\configure(function ($config) {
+    $config->setApiKey("YOUR_API_KEY");
+});
+
 
 try {
     1 / 0;
@@ -55,6 +52,7 @@ sleep(2);
 echo "An error was sent to Telebugs asynchronously." .
   "It will appear in your dashboard shortly." .
   "A notification was also sent to your Telegram chat."
+?>
 ```
 
 Replace `YOUR_API_KEY` with your actual API key. You can ask
