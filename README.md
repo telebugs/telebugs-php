@@ -5,6 +5,7 @@
 Simple error monitoring for developers. Monitor production errors in real-time
 and get them reported to Telegram with Telebugs.
 
+- [Official Documentation](https://telebugs.com/docs/integrations/php)
 - [FAQ](https://telebugs.com/faq)
 - [Telebugs News](https://t.me/TelebugsNews)
 - [Telebugs Community](https://t.me/TelebugsCommunity)
@@ -18,7 +19,7 @@ The package is designed to be simple and easy to use. It provides a simple API
 to send errors to Telebugs, which will then be reported to your Telegram
 project. This guide will help you get started with Telebugs for PHP.
 
-For full details, please refer to the [Telebugs documentation](https://telebugs.com/new/docs/integrations/php).
+For full details, please refer to the [Telebugs documentation](https://telebugs.com/docs/integrations/php).
 
 ## Installation
 
