@@ -50,7 +50,7 @@ class ReporterTest extends TestCase
         $this->assertCount(1, $this->container);
     }
 
-    public function testReporterDoesNotSendIgnoredErrors(): void
+    public function testReporterDoesNotReportIgnoredErrors(): void
     {
         $mock = new MockHandler([
             new Response(201, [], '{"id":123}'),

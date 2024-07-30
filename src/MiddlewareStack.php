@@ -5,6 +5,7 @@ namespace Telebugs;
 use Telebugs\BaseMiddleware;
 use Telebugs\Report;
 
+
 class MiddlewareStack
 {
   /**
@@ -20,8 +21,14 @@ class MiddlewareStack
   public function use(BaseMiddleware $newMiddleware): void
   {
     $this->middlewares[] = $newMiddleware;
-    usort($this->middlewares, function ($a, $b) {
-      return $b->getWeight() - $a->getWeight();
+    usort($this->middlewares, function (BaseMiddleware $a, BaseMiddleware $b) {
+      $weightA = $a->getWeight();
+      $weightB = $b->getWeight();
+
+      if ($weightA === $weightB) {
+        return 0;
+      }
+      return $weightA < $weightB ? -1 : 1;
     });
   }
 
@@ -32,11 +39,11 @@ class MiddlewareStack
     }
   }
 
-  public function delete(string $middlewareClass): void
+  public function delete(mixed $middlewareClass): void
   {
-    $this->middlewares = array_filter($this->middlewares, function ($middleware) use ($middlewareClass) {
+    $this->middlewares = array_values(array_filter($this->middlewares, function ($middleware) use ($middlewareClass) {
       return !($middleware instanceof $middlewareClass);
-    });
+    }));
   }
 
   /**

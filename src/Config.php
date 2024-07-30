@@ -5,6 +5,7 @@ namespace Telebugs;
 use Telebugs\MiddlewareStack;
 use Telebugs\Middleware\ComposerRootFilter;
 use Telebugs\Middleware\RootDirectoryFilter;
+use Telebugs\Middleware\IgnoreEnvironments;
 
 class Config
 {
@@ -15,6 +16,8 @@ class Config
   private string $apiKey;
   private string $apiURL;
   private string $rootDirectory;
+  private string $environment;
+  private array $ignoreEnvironments;
   public MiddlewareStack $middlewareStack;
 
   private static ?Config $instance = null;
@@ -37,6 +40,8 @@ class Config
     $this->httpClient = new \GuzzleHttp\Client();
     $this->apiKey = "";
     $this->apiURL = self::ERROR_API_URL;
+    $this->environment = "";
+    $this->ignoreEnvironments = [];
 
     // Not sure if Composer is always available, better check first
     if (class_exists('\Composer\Autoload\ClassLoader', false)) {
@@ -54,6 +59,7 @@ class Config
     $this->middlewareStack = new MiddlewareStack();
     $this->middlewareStack->use(new ComposerRootFilter());
     $this->middlewareStack->use(new RootDirectoryFilter($this->rootDirectory));
+    $this->middlewareStack->use(new IgnoreEnvironments($this->environment, $this->ignoreEnvironments));
   }
 
   public function setHttpClient(\GuzzleHttp\Client $httpClient): void
@@ -99,6 +105,32 @@ class Config
 
     $this->middlewareStack->delete(RootDirectoryFilter::class);
     $this->middlewareStack->use(new RootDirectoryFilter($rootDirectory));
+  }
+
+  public function getEnvironment(): string
+  {
+    return $this->environment;
+  }
+
+  public function setEnvironment(string $environment): void
+  {
+    $this->environment = $environment;
+
+    $this->middlewareStack->delete(IgnoreEnvironments::class);
+    $this->middlewareStack->use(new IgnoreEnvironments($environment, $this->ignoreEnvironments));
+  }
+
+  public function getIgnoreEnvironments(): array
+  {
+    return $this->ignoreEnvironments;
+  }
+
+  public function setIgnoreEnvironments(array $ignoreEnvironments): void
+  {
+    $this->ignoreEnvironments = $ignoreEnvironments;
+
+    $this->middlewareStack->delete(IgnoreEnvironments::class);
+    $this->middlewareStack->use(new IgnoreEnvironments($this->environment, $ignoreEnvironments));
   }
 
   public function middleware(): MiddlewareStack
