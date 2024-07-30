@@ -64,8 +64,8 @@ class MiddlewareStackTest extends TestCase
     $middlewares = $stack->getMiddlewares();
 
     $this->assertEquals(2, count($middlewares));
-    $this->assertInstanceOf(TestFilteringMiddleware::class, $middlewares[1]);
-    $this->assertInstanceOf(TestNewDataMiddleware::class, $middlewares[0]);
+    $this->assertInstanceOf(TestFilteringMiddleware::class, $middlewares[0]);
+    $this->assertInstanceOf(TestNewDataMiddleware::class, $middlewares[1]);
 
     $stack = new MiddlewareStack();
     $stack->use(new TestNewDataMiddleware());
@@ -74,8 +74,8 @@ class MiddlewareStackTest extends TestCase
     $middlewares = $stack->getMiddlewares();
 
     $this->assertEquals(2, count($middlewares));
-    $this->assertInstanceOf(TestFilteringMiddleware::class, $middlewares[1]);
-    $this->assertInstanceOf(TestNewDataMiddleware::class, $middlewares[0]);
+    $this->assertInstanceOf(TestFilteringMiddleware::class, $middlewares[0]);
+    $this->assertInstanceOf(TestNewDataMiddleware::class, $middlewares[1]);
   }
 
   public function testDelete(): void

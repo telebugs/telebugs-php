@@ -87,4 +87,22 @@ class FunctionsTest extends TestCase
 
     $this->assertCount(0, $this->container);
   }
+
+  public function testDoesNotReportErrorsIgnoredByEnvironment(): void
+  {
+    $mock = new MockHandler([
+      new Response(201, [], '{"id":123}'),
+    ]);
+    $handlerStack = HandlerStack::create($mock);
+    $handlerStack->push($this->history);
+
+    configure(function ($config) use ($handlerStack) {
+      $config->setHttpClient(new Client(['handler' => $handlerStack]));
+      $config->setEnvironment("testing");
+      $config->setIgnoreEnvironments(["testing"]);
+    });
+
+    report(new \Exception("Test exception"))->wait();
+    $this->assertCount(0, $this->container);
+  }
 }
