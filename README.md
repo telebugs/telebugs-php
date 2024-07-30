@@ -1,5 +1,7 @@
 # Telebugs for PHP
 
+[![Package Version](https://poser.pugx.org/telebugs/telebugs/v/stable)](https://packagist.org/packages/telebugs/telebugs)
+
 Simple error monitoring for developers. Monitor production errors in real-time
 and get them reported to Telegram with Telebugs.
 
