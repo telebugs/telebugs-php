@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Telebugs\Tests;
 
 use PHPUnit\Framework\TestCase;
@@ -26,12 +28,12 @@ class ReportTest extends TestCase
     $this->assertEquals("InvalidArgumentException", $error1['type']);
     $this->assertEquals("error 2", $error1['message']);
     $this->assertMatchesRegularExpression('/ReportTest.php$/', $error1['backtrace'][0]['file']);
-    $this->assertEquals(17, $error1['backtrace'][0]['line']);
+    $this->assertEquals(19, $error1['backtrace'][0]['line']);
     $this->assertEquals('', $error1['backtrace'][0]['function']);
     $this->assertEquals('testDataWithNestedErrors', $error1['backtrace'][1]['function']);
     $this->assertMatchesRegularExpression('/ReportTest.php$/', $error1['backtrace'][0]['file']);
     $this->assertEquals([
-      'start_line' => 15,
+      'start_line' => 17,
       'lines' => [
         '    } catch (\Exception $e1) {',
         '      try {',
@@ -44,12 +46,12 @@ class ReportTest extends TestCase
     $this->assertEquals("Exception", $error2['type']);
     $this->assertEquals("error 1", $error2['message']);
     $this->assertMatchesRegularExpression('/ReportTest.php$/', $error2['backtrace'][0]['file']);
-    $this->assertEquals(14, $error2['backtrace'][0]['line']);
+    $this->assertEquals(16, $error2['backtrace'][0]['line']);
     $this->assertEquals('', $error2['backtrace'][0]['function']);
     $this->assertEquals('testDataWithNestedErrors', $error2['backtrace'][1]['function']);
     $this->assertMatchesRegularExpression('/ReportTest.php$/', $error2['backtrace'][0]['file']);
     $this->assertEquals([
-      'start_line' => 12,
+      'start_line' => 14,
       'lines' => [
         '  {',
         '    try {',
