@@ -50,8 +50,8 @@ try {
 }
 
 echo "An error was sent to Telebugs." .
-  "It will appear in your dashboard shortly." .
-  "A notification was also sent to your Telegram chat."
+    "It will appear in your dashboard shortly." .
+    "A notification was also sent to your Telegram chat."
 ?>
 ```
 
