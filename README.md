@@ -2,8 +2,8 @@
 
 [![Package Version](https://poser.pugx.org/telebugs/telebugs/v/stable)](https://packagist.org/packages/telebugs/telebugs)
 
-Simple error monitoring for developers. Monitor production errors in real-time
-and get them reported to Telegram with Telebugs.
+Refreshingly simple error monitoring. Catch production errors automatically and
+instantly report them to Telegram.
 
 - [Official Documentation](https://telebugs.com/docs/integrations/php)
 - [FAQ](https://telebugs.com/faq)
